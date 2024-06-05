@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To know location by pincode</title>
+    <link rel="icon" href="https://w7.pngwing.com/pngs/457/630/png-transparent-location-logo-location-computer-icons-symbol-location-miscellaneous-angle-heart.png">
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        .main {
+            height: 100vh;
+            background-color: black;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        form {
+            width: 350px;
+            height: 550px;
+            background-color: darkcyan;
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            gap: 20px;
+            text-align: center;
+            border-radius: 20px;
+
+        }
+
+        input {
+            width: 60%;
+            text-align: center;
+            padding: 10px;
+            font-size: 18px;
+            border-radius: 10px;
+            font-weight: bolder;
+            border: none;
+            outline: none;
+
+        }
+
+        h2 {
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-weight: bolder;
+            letter-spacing: 0.8px;
+        }
+
+        button {
+            width: 150px;
+            height: 45px;
+            font-size: 18px;
+            background-color: aqua;
+            border: none;
+            font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+            outline: none;
+            letter-spacing: 1.5px;
+            border-radius: 10px;
+            color: darkgreen;
+            font-weight: bolder;
+            margin: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="main">
+        <form>
+            <h2>Enter here pincode:</h2>
+            <input type="text" placeholder="pincode" id="pincode" name="pincode">
+            <input type="text" placeholder="country" id="country" name="country">
+            <input type="text" placeholder="state" id="state" name="state">
+            <input type="text" placeholder="region" id="region" name="region">
+            <input type="text" placeholder="city" id="city" name="city">
+            <input type="text" list="villages" placeholder="choose/write" name="village">
+            <datalist id="villages">
+                <!-- <option>dkfj</option> -->
+            </datalist>
+            <button value="submit">Submit</button>
+
+        </form>
+    </div>
+    let sr;
+    <script src="../jquery-3.7.1.min.js"></script>
+    <script>
+        $(document).on('change', '#pincode', function () {
+            let pin = $(this).val()
+            let field = $(this)
+            // console.log(field)
+            if (pin.length == 6) {
+                console.log(pin)
+                $.ajax({
+                    url: `https://api.postalpincode.in/pincode/${pin}`,
+                    dataType: 'json',
+                    success: function (res) {
+                        console.log(res)
+                        res = res[0]
+                        if (res.Status == 'Error') {
+                            console.log('Please enter a valide pincode')
+                        } else {
+
+
+                            let country = res.PostOffice[0].Country
+                            let city = res.PostOffice[0].District
+                            let region = res.PostOffice[0].Region
+                            let state = res.PostOffice[0].State
+                            $('#country').val(country)
+                            $('#state').val(state)
+                            $('#region').val(region)
+                            $('#city').val(city)
+                            for (sr = 0; sr < res.PostOffice.length; sr++) {
+                                let name = res.PostOffice[sr].Name
+                                console.log(name)
+                                $('#villages').append(`<option>${name}</option>`)
+                            }
+                        }
+                    }
+                })
+            }
+        })
+    </script>
+</body>
+
+</html>
